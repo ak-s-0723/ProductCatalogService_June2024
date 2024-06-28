@@ -2,6 +2,7 @@ package org.example.productcatalogservice.controllers;
 
 import org.example.productcatalogservice.dtos.CategoryDto;
 import org.example.productcatalogservice.dtos.ProductDto;
+import org.example.productcatalogservice.models.Category;
 import org.example.productcatalogservice.models.Product;
 import org.example.productcatalogservice.services.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,13 @@ public class ProductController {
 
     @GetMapping
     public List<ProductDto> getAllProducts() {
-        return new ArrayList<ProductDto>();
+        List<ProductDto> productDtos = new ArrayList<>();
+        List<Product> products = productService.getAllProducts();
+        for(Product product : products) {
+            productDtos.add(from(product));
+        }
+
+        return productDtos;
     }
 
     @GetMapping("{id}")
@@ -43,7 +50,8 @@ public class ProductController {
             ProductDto productDto = from(product);
             return new ResponseEntity<>(productDto, headers, HttpStatus.OK);
         }catch(IllegalArgumentException ex) {
-            return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
+            //return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
+            throw ex;
         }
     }
 
@@ -54,7 +62,24 @@ public class ProductController {
 
     @PutMapping("{id}")
     public ProductDto replaceProduct(@PathVariable Long id,@RequestBody ProductDto productDto) {
-        return productDto;
+        Product product = from(productDto);
+        Product result = productService.replaceProduct(id,product);
+        return from(result);
+    }
+
+
+    private Product from(ProductDto productDto) {
+        Product product = new Product();
+        product.setName(productDto.getName());
+        product.setPrice(productDto.getPrice());
+        product.setImageUrl(productDto.getImageUrl());
+        product.setDescription(productDto.getDescription());
+        if(productDto.getCategory() !=null) {
+            Category category = new Category();
+            category.setName(productDto.getCategory().getName());
+            product.setCategory(category);
+        }
+        return product;
     }
 
     private ProductDto from(Product product) {
