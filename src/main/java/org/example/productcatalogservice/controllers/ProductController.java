@@ -38,9 +38,12 @@ public class ProductController {
     @GetMapping("{id}")
     public ResponseEntity<ProductDto> getProduct(@PathVariable("id") Long productId) {
         try {
-            if(productId < 1) {
+            if(productId == 0) {
                 throw new IllegalArgumentException("Product not present");
+            } else if (productId < 0) {
+                throw new IllegalArgumentException("Are you stupid ?");
             }
+
             MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
             headers.add("called by", "smart frontend");
             Product product = productService.getProductById(productId);
