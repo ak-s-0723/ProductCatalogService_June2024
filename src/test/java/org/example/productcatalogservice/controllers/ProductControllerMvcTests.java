@@ -1,21 +1,24 @@
 package org.example.productcatalogservice.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.productcatalogservice.dtos.ProductDto;
 import org.example.productcatalogservice.models.Product;
 import org.example.productcatalogservice.services.IProductService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ProductController.class)
 public class ProductControllerMvcTests {
@@ -52,9 +55,43 @@ public class ProductControllerMvcTests {
         //Act and Assert
         mockMvc.perform(get("/products"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(objectMapper.writeValueAsString(productList)));
+                .andExpect(content().string(objectMapper.writeValueAsString(productList)))
+                .andExpect(jsonPath("$[0].name").value("Iphone"))
+                .andExpect(jsonPath("$[0].length()").value(3))
+                .andExpect(jsonPath("$.length()").value(2));
     }
 
+//    [
+//            {"name":""}
+//    ,
+//    {"name":""}
+//    ]
+
+    @Test
+    public void Test_CreateProduct_RunsSuccessfully() throws Exception {
+        ProductDto productDto = new ProductDto();
+        productDto.setId(5L);
+        productDto.setName("ipad");
+        productDto.setDescription("writing pad");
+
+        Product product = new Product();
+        product.setId(5L);
+        product.setName("ipad");
+        product.setDescription("writing pad");
+        when(productService.createProduct(any(Product.class))).thenReturn(product);
+
+        mockMvc.perform(post("/products").content(objectMapper.writeValueAsString(productDto)).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string(objectMapper.writeValueAsString(productDto)))
+                .andExpect(jsonPath("$.name").value("ipad"))
+                .andExpect(jsonPath("$.length()").value(3));
+    }
+
+//    {
+//        "id" : 5,
+//        "name" : "ipad",
+//        "description" : "dusfdiwhfd"
+//    }
 
 
 }
