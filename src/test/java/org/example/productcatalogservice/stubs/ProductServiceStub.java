@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-@Primary
 public class ProductServiceStub implements IProductService {
     Map<Long, Product> productMap;
 

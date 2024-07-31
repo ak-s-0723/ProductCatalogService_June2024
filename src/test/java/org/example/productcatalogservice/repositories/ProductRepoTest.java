@@ -1,6 +1,7 @@
 package org.example.productcatalogservice.repositories;
 
 import jakarta.transaction.Transactional;
+import org.example.productcatalogservice.models.Category;
 import org.example.productcatalogservice.models.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,20 @@ class ProductRepoTest {
 //        }
 
         //String productName = productRepo.findProductNamefromId(1L);
-        System.out.println(productRepo.findCategoryNameFromProductId(5L));
+        System.out.println(productRepo.findCategoryNameFromProductId(1L));
+    }
+
+    @Test
+    public void insertIntoAWSDb() {
+        Product product = new Product();
+        product.setId(1L);
+        product.setName("Krishna");
+        product.setDescription("Learner");
+        Category category = new Category();
+        category.setName("Learners");
+        category.setId(10L);
+        product.setCategory(category);
+        productRepo.save(product);
     }
 
 }

@@ -36,7 +36,7 @@ public class ProductController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<ProductDto> getProduct(@PathVariable("id") Long productId) {
+    public ProductDto getProduct(@PathVariable("id") Long productId) {
         try {
             if(productId == 0) {
                 throw new IllegalArgumentException("Product not present");
@@ -48,10 +48,12 @@ public class ProductController {
             headers.add("called by", "smart frontend");
             Product product = productService.getProductById(productId);
             if (product == null) {
-                return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+                return null;
+                //return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
             }
             ProductDto productDto = from(product);
-            return new ResponseEntity<>(productDto, headers, HttpStatus.OK);
+            return productDto;
+            //return new ResponseEntity<>(productDto, headers, HttpStatus.OK);
         }catch(IllegalArgumentException ex) {
             //return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
             throw ex;

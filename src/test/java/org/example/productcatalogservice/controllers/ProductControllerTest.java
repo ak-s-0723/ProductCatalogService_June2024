@@ -42,13 +42,13 @@ public class ProductControllerTest {
                .thenReturn(product);
 
        //Act
-       ResponseEntity<ProductDto> response =
+       ProductDto response =
                productController.getProduct(id);
 
        //Assert
-       assertNotNull(response.getBody());
-       assertEquals(id,response.getBody().getId());
-       assertEquals("Iphone20",response.getBody().getName());
+       assertNotNull(response);
+       assertEquals(id,response.getId());
+       assertEquals("Iphone20",response.getName());
    }
 
    @Test

@@ -28,14 +28,14 @@ public class ProductControllerFlow {
 
         //Act
         ProductDto response = productController.createProduct(productDto);
-        ResponseEntity<ProductDto>  responseEntity = productController.getProduct(response.getId());
+        ProductDto  responseEntity = productController.getProduct(response.getId());
         productDto.setName("Iphone20");
         ProductDto response2  = productController.replaceProduct(response.getId(),productDto);
-        ResponseEntity<ProductDto>  responseEntity2 = productController.getProduct(response2.getId());
+        ProductDto responseEntity2 = productController.getProduct(response2.getId());
 
 
         //Assert
-        assertEquals("Iphone15",responseEntity.getBody().getName());
-        assertEquals("Iphone20",responseEntity2.getBody().getName());
+        assertEquals("Iphone15",responseEntity.getName());
+        assertEquals("Iphone20",responseEntity2.getName());
     }
 }
