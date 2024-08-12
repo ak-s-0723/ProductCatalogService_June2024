@@ -4,8 +4,9 @@ import org.example.productcatalogservice.clients.FakeStoreApiClient;
 import org.example.productcatalogservice.dtos.FakeStoreProductDto;
 import org.example.productcatalogservice.models.Category;
 import org.example.productcatalogservice.models.Product;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.annotation.Primary;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -13,14 +14,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Primary
 public class FakeStoreProductService implements IProductService {
 
-    @Autowired
     private RestTemplateBuilder restTemplateBuilder;
 
-    @Autowired
+
     private FakeStoreApiClient fakeStoreApiClient;
 
+
+    private RedisTemplate<String,Object> redisTemplate;
+
+
+    public FakeStoreProductService(RestTemplateBuilder restTemplateBuilder,FakeStoreApiClient fakeStoreApiClient,RedisTemplate<String,Object> redisTemplate) {
+        this.restTemplateBuilder = restTemplateBuilder;
+        this.fakeStoreApiClient = fakeStoreApiClient;
+        this.redisTemplate = redisTemplate;
+    }
 
     @Override
     public List<Product> getAllProducts() {
@@ -35,7 +45,21 @@ public class FakeStoreProductService implements IProductService {
 
     @Override
     public Product getProductById(Long id) {
-        return from(fakeStoreApiClient.getProductById(id));
+        FakeStoreProductDto fakeStoreProductDto = null;
+
+        fakeStoreProductDto = (FakeStoreProductDto) redisTemplate.opsForHash()
+                .get("_PRODUCTS",id);
+
+        if(fakeStoreProductDto != null) {
+            System.out.println("Found in Cache");
+            return  from(fakeStoreProductDto);
+        }
+
+        fakeStoreProductDto = fakeStoreApiClient.getProductById(id);
+        System.out.println("Found by calling fakestore");
+        redisTemplate.opsForHash().put("_PRODUCTS",id,fakeStoreProductDto);
+
+        return from(fakeStoreProductDto);
     }
 
     @Override
