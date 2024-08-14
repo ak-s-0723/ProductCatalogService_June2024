@@ -17,6 +17,11 @@ public class ProductServiceStub implements IProductService {
         this.productMap = new HashMap<>();
     }
 
+    @Override
+    public Product getProductBasedOnScope(Long pid,Long uid) {
+        return null;
+    }
+
 
     @Override
     public Product getProductById(Long id) {

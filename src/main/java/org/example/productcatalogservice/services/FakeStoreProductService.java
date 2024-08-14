@@ -5,7 +5,6 @@ import org.example.productcatalogservice.dtos.FakeStoreProductDto;
 import org.example.productcatalogservice.models.Category;
 import org.example.productcatalogservice.models.Product;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -14,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Primary
 public class FakeStoreProductService implements IProductService {
 
     private RestTemplateBuilder restTemplateBuilder;
@@ -42,6 +40,12 @@ public class FakeStoreProductService implements IProductService {
            }
        return products;
     }
+
+    @Override
+    public Product getProductBasedOnScope(Long pid,Long uid) {
+        return null;
+    }
+
 
     @Override
     public Product getProductById(Long id) {

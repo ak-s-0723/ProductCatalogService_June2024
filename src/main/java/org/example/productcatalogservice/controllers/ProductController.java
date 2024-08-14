@@ -22,6 +22,12 @@ public class ProductController {
     @Autowired
     private IProductService productService;
 
+    @GetMapping("/{pid}/{uid}")
+    public ProductDto getProductDetailsBasedOnUserScope(@PathVariable Long pid,@PathVariable Long uid){
+        Product product = productService.getProductBasedOnScope(pid,uid);
+        return from(product);
+    }
+
 
 
     @GetMapping
